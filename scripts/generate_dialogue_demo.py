@@ -1,8 +1,5 @@
 #!/usr/bin/env python3
-"""Generate a short stereo dialogue demo for spatial captions.
-
-Uses macOS `say` for left/right speakers, then FFmpeg to mux video + stereo audio.
-"""
+"""macOS `say` + stereo pan + colored panels → dialogue_demo.mp4 + cues.json."""
 
 from __future__ import annotations
 

@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Summarize saved caption A/B study sessions."""
+"""Aggregate content/study_results/*.json into a small accuracy table."""
 
 from __future__ import annotations
 

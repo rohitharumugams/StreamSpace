@@ -1,4 +1,4 @@
-"""Stereo spatial analysis → LEFT / CENTER / RIGHT."""
+"""L/R energy balance over short windows → LEFT / CENTER / RIGHT."""
 
 from __future__ import annotations
 
@@ -71,7 +71,7 @@ def load_stereo_wav(path: Path) -> tuple[np.ndarray, np.ndarray, int]:
     return left, right, rate
 
 
-# Film dialogue is often only mildly panned; keep the deadzone tight.
+# Film pans are usually mild — tight deadzone so we still catch them.
 BALANCE_DEADZONE = 0.08
 
 
@@ -99,7 +99,7 @@ def analyze_stereo(
         r = right[start:end]
         le = float(np.mean(l * l) + 1e-12)
         re = float(np.mean(r * r) + 1e-12)
-        # Inter-channel level difference style balance
+        # ICLD-style balance
         balance = (re - le) / (re + le)
         direction = _direction_from_balance(balance)
         confidence = min(1.0, abs(balance) / 0.35)
@@ -131,12 +131,12 @@ def direction_for_span(
     if not windows:
         return "CENTER", 0.0, 0.0
     mid = (start + end) / 2.0
-    # Prefer windows overlapping the utterance span; fall back to nearest mid.
+    # Prefer overlapping windows; otherwise nearest to mid.
     overlapping = [w for w in windows if w.end >= start and w.start <= end]
     if not overlapping:
         overlapping = [min(windows, key=lambda w: abs((w.start + w.end) / 2 - mid))]
 
-    # Energy-weighted mean balance over the cue (more sensitive than hard votes).
+    # Energy-weighted mean balance (beats hard voting on soft pans).
     num = 0.0
     den = 0.0
     for w in overlapping:
@@ -152,7 +152,7 @@ def direction_for_span(
 
 
 def x_from_balance(balance: float, *, gain: float = 0.22) -> float:
-    """Map stereo balance to a continuous caption anchor x in [0.15, 0.85]."""
-    # Mild film pans still move on-screen; |balance|>=gain saturates to the side.
+    """balance ∈ [-1,1] → caption x in roughly [0.15, 0.85]."""
+    # |balance| >= gain saturates toward the side.
     t = max(-1.0, min(1.0, balance / max(gain, 1e-6)))
     return float(0.5 + 0.35 * t)

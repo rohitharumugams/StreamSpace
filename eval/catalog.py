@@ -1,4 +1,4 @@
-"""Load HLS packages and network traces for offline evaluation."""
+"""Load packaged HLS segment sizes + parse Mbps traces."""
 
 from __future__ import annotations
 

@@ -1,20 +1,22 @@
-# Drop your media here
+# Inbox
 
-Put a video and matching subtitle file in this folder, then run:
+Drop a video (and ideally matching subs) here, then:
 
 ```bash
 python scripts/ingest.py
 ```
 
-## Layout A (simplest)
+That copies into `content/source/`, packages HLS, and runs the caption build.
+
+## Flat
 
 ```text
 content/inbox/
   myclip.mp4
-  myclip.srt      # or myclip.vtt
+  myclip.srt      # .vtt or .cues.json also fine
 ```
 
-## Layout B (folder)
+## Folder
 
 ```text
 content/inbox/myclip/
@@ -22,8 +24,6 @@ content/inbox/myclip/
   subs.srt
 ```
 
-Supported subtitles: `.srt`, `.vtt`, `.cues.json`
+No subtitle file → ingest tries Whisper (`pip install openai-whisper`).
 
-If no subtitle file is present, ingest will try Whisper ASR (requires `openai-whisper`).
-
-After ingest, open the player and select your video name.
+After it finishes, refresh the player and pick `myclip`.

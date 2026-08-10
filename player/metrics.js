@@ -1,6 +1,4 @@
-/**
- * Session metrics for ABR evaluation.
- */
+/* Startup / rebuffer / switch / bitrate counters for the live player */
 
 export function createMetrics() {
   return {

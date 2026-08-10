@@ -1,7 +1,6 @@
 #!/usr/bin/env python3
-"""Build spatial smart captions for a video package.
+"""CLI: stereo + vision + transcript → content/hls/<name>/captions.json
 
-Examples:
   python -m captions.build --video dialogue_demo
   python -m captions.build --input content/source/clip.mp4 --name clip --asr whisper
 """
@@ -100,7 +99,7 @@ def main() -> int:
         print(f"Source video not found for '{name}'", file=sys.stderr)
         return 1
 
-    # Auto-pick subtitle file next to source when requested / available.
+    # Grab a .srt/.vtt/.cues.json next to the source if one exists.
     subs_path = args.subtitles
     if subs_path is None:
         for candidate in [
@@ -131,7 +130,7 @@ def main() -> int:
         cues = transcribe_whisper(wav, model_size=args.whisper_model)
         generated_by.append("whisper")
     else:
-        # script / subtitles: prefer explicit or auto-discovered subtitle/cue file
+        # script / subtitles path
         if subs_path is None or not subs_path.exists():
             print(
                 "No cues/subtitles found. Drop a .srt/.vtt/.cues.json next to the video "
@@ -154,7 +153,7 @@ def main() -> int:
             sample_times.add(round(c.start, 3))
             sample_times.add(round((c.start + c.end) / 2, 3))
             sample_times.add(round(c.end, 3))
-            # Slight offsets help when the mid-frame is a cut / motion blur.
+            # Offsets help when the mid frame is a cut or blurry.
             mid = (c.start + c.end) / 2
             sample_times.add(round(max(0.0, mid - 0.35), 3))
             sample_times.add(round(mid + 0.35, 3))
@@ -180,7 +179,7 @@ def main() -> int:
         generated_by=generated_by + ["fuse", "placement"],
     )
 
-    # Prefer scripted speaker names when available (identity), keep fused direction.
+    # Scripted names for identity; fused direction/placement stay as-is.
     cues_path = source.with_suffix(".cues.json")
     if cues_path.exists():
         script = json.loads(cues_path.read_text())

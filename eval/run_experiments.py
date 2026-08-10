@@ -1,7 +1,6 @@
 #!/usr/bin/env python3
-"""Run ABR × trace × video experiments and write comparison results.
+"""ABR × trace × video sweep → eval/results/<stamp>/{results.json,results.csv}
 
-Example:
   python -m eval.run_experiments
   python -m eval.run_experiments --abr hybrid,throughput --trace volatile,sudden_drop
 """

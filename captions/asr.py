@@ -1,4 +1,4 @@
-"""ASR helpers — Whisper when available, otherwise scripted demo transcripts."""
+"""Whisper transcription wrapper + TranscriptCue type."""
 
 from __future__ import annotations
 

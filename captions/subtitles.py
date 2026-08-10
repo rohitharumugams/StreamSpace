@@ -1,4 +1,4 @@
-"""Parse common subtitle formats into transcript cues."""
+"""Parse .srt / .vtt / .cues.json into TranscriptCue lists."""
 
 from __future__ import annotations
 
@@ -63,14 +63,12 @@ def load_vtt(path: Path) -> list[TranscriptCue]:
     text = path.read_text(encoding="utf-8-sig")
     # Drop header
     text = re.sub(r"^WEBVTT.*?\n\n", "", text, count=1, flags=re.IGNORECASE | re.DOTALL)
-    # Reuse SRT-ish parsing after normalizing commas
-    fake = text.replace(".", ",").replace("-->", "-->")
-    # Actually keep dots for VTT; load_srt expects commas. Convert VTT times to SRT style.
+    # VTT uses dots; load_srt wants commas. Rewrite times, then reuse.
     normalized = []
     for line in text.splitlines():
         if "-->" in line:
             line = line.replace(".", ",")
-            # remove settings after end ts
+            # drop cue settings after the end timestamp
             left, right = line.split("-->", 1)
             right_ts = right.strip().split()[0]
             line = f"{left.strip()} --> {right_ts}"

@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# One-command local demo bootstrap.
+# Build dialogue_demo (if needed), captions, then boot uvicorn on :8080.
 set -euo pipefail
 ROOT="$(cd "$(dirname "$0")/.." && pwd)"
 cd "$ROOT"

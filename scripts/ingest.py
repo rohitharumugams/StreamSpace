@@ -1,18 +1,12 @@
 #!/usr/bin/env python3
-"""Ingest a video + subtitle drop from content/inbox/.
+"""Copy inbox drops → source/, package HLS, build captions.
 
-Supported layouts:
+Layouts:
 
-  content/inbox/myclip.mp4
-  content/inbox/myclip.srt          # or .vtt / .cues.json
+  content/inbox/myclip.mp4 + myclip.srt
+  content/inbox/myclip/{video.mp4,subs.srt}
 
-  content/inbox/myclip/
-    video.mp4                       # any .mp4/.mov/.mkv
-    subs.srt                        # any .srt/.vtt/.cues.json
-
-Then run:
   python scripts/ingest.py
-  # or specifically:
   python scripts/ingest.py --name myclip
 """
 

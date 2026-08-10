@@ -1,8 +1,4 @@
-"""Intelligent caption placement.
-
-Chooses a screen position that stays near the speaker while avoiding
-faces / speaker panels and other important visual regions.
-"""
+"""Pick caption (x, y) near the speaker without covering faces/panels."""
 
 from __future__ import annotations
 
@@ -52,7 +48,7 @@ def _det_box(det: VisualDetection, pad: float = 0.03) -> PlacementBox:
 
 def _candidate_slots(direction: Direction, caption_w: float = 0.42, caption_h: float = 0.10) -> list[tuple[PlacementBox, Direction, float]]:
     """Generate ranked candidate slots: (box, align, prior)."""
-    # prior favors speaker side + lower third (readable captions).
+    # prior: speaker side + lower third reads better.
     slots: list[tuple[PlacementBox, Direction, float]] = []
 
     def add(x: float, y: float, align: Direction, prior: float) -> None:
@@ -99,7 +95,7 @@ def place_caption(
     caption_h: float = 0.10,
 ) -> PlacementResult:
     slots = _candidate_slots(direction, caption_w=caption_w, caption_h=caption_h)
-    # Also consider a continuous slot anchored at preferred_x.
+    # Also try a continuous slot at preferred_x.
     if preferred_x is not None:
         ax = min(max(preferred_x - caption_w / 2, 0.02), 1.0 - caption_w - 0.02)
         for y, prior in ((0.78, 1.05), (0.66, 0.95), (0.12, 0.55)):
@@ -154,12 +150,12 @@ def place_near_speaker(
     caption_w: float = 0.38,
     caption_h: float = 0.10,
 ) -> PlacementResult:
-    """Place caption near a detected speaker, nudging away from face boxes."""
+    """Sit near the detected speaker; nudge if we'd cover the face."""
     x = min(max(preferred_x, 0.12), 0.88)
     y = min(max(preferred_y, 0.08), 0.86)
     align = direction if direction != "CENTER" else _align_from_x(x)
 
-    # Candidate y offsets: under chin, lower-third, above head.
+    # y tries: under chin, lower-third, above head.
     y_opts = [
         y,
         min(0.84, y + 0.08),

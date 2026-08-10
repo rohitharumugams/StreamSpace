@@ -1,4 +1,4 @@
-"""Fuse transcript + stereo + vision into spatial caption events."""
+"""Per-cue merge of transcript, stereo direction, and vision speaker pick."""
 
 from __future__ import annotations
 
@@ -10,7 +10,7 @@ from captions.schema import CaptionEvent, CaptionTrack, Direction
 from captions.stereo import SpatialWindow, direction_for_span, x_from_balance
 from captions.vision import VisualDetection, VisualFrame, vision_for_span
 
-# Demo-friendly defaults; overwritten by .cues.json speaker names when present.
+# Demo defaults; .cues.json speaker names win when present.
 SPEAKER_BY_DIRECTION: dict[Direction, str] = {
     "LEFT": "SPEAKER L",
     "RIGHT": "SPEAKER R",
@@ -37,7 +37,7 @@ def resolve_direction(
     vision_conf: float,
     chosen: VisualDetection | None,
 ) -> tuple[Direction, float, str]:
-    """Audio-visual association: vision anchors, stereo disambiguates."""
+    """Pick LEFT/CENTER/RIGHT when stereo and vision disagree."""
     if vision_dir is None or chosen is None:
         return stereo_dir, stereo_conf, "stereo"
 
@@ -45,15 +45,15 @@ def resolve_direction(
         conf = min(1.0, 0.45 * stereo_conf + 0.65 * vision_conf)
         return vision_dir, conf, "av-agree"
 
-    # Stereo weak / center-mixed → trust the selected face.
+    # Weak / center-mixed stereo → trust the face we picked.
     if stereo_dir == "CENTER" or abs(stereo_balance) < 0.10:
         return vision_dir, min(1.0, vision_conf + 0.05), "vision"
 
-    # Face is centered but audio leans — keep audio side for arrows/labels.
+    # Face centered but audio leans — keep the arrow on the audio side.
     if vision_dir == "CENTER" and stereo_dir != "CENTER":
         return stereo_dir, stereo_conf * 0.75, "stereo-bias"
 
-    # Strong conflict: still park the caption on the chosen face.
+    # Disagree hard: still put the caption on the chosen face.
     return vision_dir, max(0.4, vision_conf * 0.75), "av-select"
 
 

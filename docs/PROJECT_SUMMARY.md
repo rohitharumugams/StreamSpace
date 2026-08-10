@@ -1,62 +1,39 @@
-# Project Summary
+# Project notes
 
-## Goal
+Built in two layers: get a real adaptive stream working end-to-end, then hang spatial captions off the same packages.
 
-Build a real adaptive streaming system, then add **spatial smart captions** that preserve speaker identity and coarse sound direction lost by normal subtitles.
+## Streaming
 
-## What’s implemented
+- Ladder packaging via FFmpeg (`scripts/package_hls.py`) → fMP4 HLS under `content/hls/`
+- FastAPI serves playlists + segments; `server/throttle.py` rate-limits segment bodies from Mbps traces
+- Player (`player/player.js`) drives hls.js with custom ABR (`throughput`, `buffer`, `hybrid`, `risk`, plus fixed / native)
+- Offline twin of those controllers in `eval/` so you can sweep ABR × trace without clicking around
 
-### Adaptive streaming
-- Multi-bitrate HLS packaging (360p / 480p / 720p)
-- Segment streaming server + browser player
-- Network trace throttle (`stable`, `volatile`, `congested`, `spike_drop`, …)
-- ABR controllers: throughput, buffer, hybrid, **risk-aware**
-- Offline evaluation: `python -m eval.run_experiments`
+Risk ABR is the interesting one: it uses EWMA mean/std + trend, shrinks the budget when CV is high or buffer is thin, and refuses upgrades until things look calm. On the included volatile traces it sits below pure throughput; on congested traces everyone ends up on the safe floor while fixed-high rebuffers.
 
-### Spatial smart captions
-- Stereo L/C/R analysis
-- Vision speaker candidates (faces or demo panels)
-- Audio-visual fusion → speaker + direction
-- Placement engine avoiding faces/panels
-- Player modes: standard / speaker / spatial / full
-- Accuracy eval: `python -m captions.eval_accuracy`
-- Caption A/B study UI: `/study`
+## Captions
 
-## Demo path
+- Stereo ICLD-style balance → LEFT / CENTER / RIGHT (`captions/stereo.py`)
+- OpenCV Haar faces (or green/blue panels on `dialogue_demo`) (`captions/vision.py`)
+- Per-cue fusion + face-aware placement (`captions/fuse.py`, `captions/placement.py`)
+- Modes in the overlay: standard / speaker / spatial / full
+- Accuracy vs `.cues.json`: `python -m captions.eval_accuracy`
+- Short A/B harness at `/study`
+
+On `dialogue_demo` (scripted stereo + panels) direction/speaker/AV agreement are clean; smart placement overlap is ~0.002 vs ~0.600 naive. That's a controlled demo — real footage will need better vision / ASR.
+
+## Demo
 
 ```bash
 ./scripts/run_demo.sh
+# player http://127.0.0.1:8080
+# study  http://127.0.0.1:8080/study
 ```
 
-- Player: http://127.0.0.1:8080
-- Study: http://127.0.0.1:8080/study
+Numbers refresh into `docs/RESULTS.md` via `python scripts/generate_report.py --refresh-abr --refresh-captions`.
 
-## Measured results (dialogue_demo)
+## Still rough
 
-| Metric | Result |
-|--------|--------|
-| Direction accuracy | 100% |
-| Speaker accuracy | 100% |
-| AV agreement | 100% |
-| Placement overlap (smart vs naive) | 0.002 vs 0.600 |
-
-Risk-aware ABR trades bitrate for stability under volatile traces; on `congested` it matches baselines at the safe floor while `fixed-high` rebuffers heavily.
-
-## Architecture
-
-```text
-Source video
-   ├─ FFmpeg → HLS renditions → ABR player + network simulator
-   └─ Captions pipeline
-        ├─ ASR / script cues
-        ├─ Stereo analysis
-        ├─ Vision detection
-        ├─ AV fusion
-        └─ Placement → captions.json → overlay / study
-```
-
-## Suggested next polish
-
-- Run `/study` with real participants and refresh `docs/RESULTS.md`
-- Swap in a real multi-speaker stereo scene + Whisper ASR
-- Optional: commit a short recorded demo GIF/video of player + study
+- Study UI has almost no real participants yet; ignore `sim-*` sessions when claiming user results
+- Haar ≠ speaker diarization; swap in a real multi-speaker scene + Whisper when you want a harder eval
+- Optional: record a short screen capture of player + study for the writeup

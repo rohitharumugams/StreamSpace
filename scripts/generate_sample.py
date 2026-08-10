@@ -1,9 +1,5 @@
 #!/usr/bin/env python3
-"""Generate a short stereo sample video for pipeline testing.
-
-Replace content/source/sample.mp4 with a real dialogue clip when ready.
-Uses lavfi sources only (no drawtext / libfreetype required).
-"""
+"""Tiny lavfi stereo test clip → content/source/sample.mp4 (no drawtext needed)."""
 
 from __future__ import annotations
 

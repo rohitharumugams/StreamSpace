@@ -1,9 +1,4 @@
-"""Visual speaker-candidate detection from video frames.
-
-Uses:
-  1) OpenCV Haar face detection (frontal + profile) when faces are present
-  2) Colored speaker-panel detection for the synthetic dialogue demo
-"""
+"""Find speaker candidates in frames (Haar faces, or dialogue_demo panels)."""
 
 from __future__ import annotations
 
@@ -45,7 +40,7 @@ def _direction_from_x(x: float) -> Direction:
 
 
 def _nms(dets: list[VisualDetection], iou_thresh: float = 0.35) -> list[VisualDetection]:
-    """Greedy NMS on normalized boxes (sorted by confidence then size)."""
+    """NMS on normalized boxes (confidence, then size)."""
     if len(dets) <= 1:
         return dets
 
@@ -113,7 +108,7 @@ def _detect_faces(frame_bgr: np.ndarray, cascades: list[cv2.CascadeClassifier]) 
 
 
 def _detect_speaker_panels(frame_bgr: np.ndarray) -> list[VisualDetection]:
-    """Detect the green/blue speaker panels used in dialogue_demo."""
+    """Green/blue panels from dialogue_demo."""
     hsv = cv2.cvtColor(frame_bgr, cv2.COLOR_BGR2HSV)
     h, w = frame_bgr.shape[:2]
     dets: list[VisualDetection] = []
@@ -214,7 +209,7 @@ def vision_candidates_for_span(
     *,
     window_s: float = 1.25,
 ) -> list[VisualDetection]:
-    """Collect visual speaker candidates near an utterance span."""
+    """Detections near an utterance time span."""
     if not frames:
         return []
     mid = (start + end) / 2.0
@@ -222,7 +217,7 @@ def vision_candidates_for_span(
     if not nearby:
         nearby = [min(frames, key=lambda f: abs(f.time - mid))]
 
-    # Prefer detections closer in time to the cue midpoint.
+    # Prefer detections closer to cue mid.
     scored: list[tuple[float, VisualDetection]] = []
     for frame in nearby:
         time_w = 1.0 - min(1.0, abs(frame.time - mid) / max(window_s, 1e-3))
@@ -231,7 +226,7 @@ def vision_candidates_for_span(
 
     best: dict[str, tuple[float, VisualDetection]] = {}
     for score, d in scored:
-        # Bucket by coarse horizontal bin so the same person merges across frames.
+        # Coarse x-bin so the same person merges across nearby frames.
         bin_x = int(round(d.x * 6))
         key = d.track_id or f"{d.source}-{bin_x}"
         prev = best.get(key)
@@ -248,7 +243,7 @@ def pick_visual_speaker(
     stereo_balance: float = 0.0,
     stereo_dir: Direction | None = None,
 ) -> VisualDetection | None:
-    """Choose the active speaker face/panel using stereo as a prior."""
+    """Score faces/panels; stereo balance is a soft prior on x."""
     if not dets:
         return None
 
@@ -262,7 +257,7 @@ def pick_visual_speaker(
         if stereo_dir and stereo_dir != "CENTER" and d.direction == stereo_dir:
             side_bonus = 0.25
         elif stereo_dir == "CENTER":
-            # Mild preference for larger/central faces when audio is center-mixed.
+            # Audio center-mixed → slight lean toward larger/central faces.
             side_bonus = 0.08 * (1.0 - abs(d.x - 0.5) * 1.2)
         size_bonus = min(0.25, d.w * d.h * 3.5)
         score = d.confidence + src_bonus + 0.55 * prox + side_bonus + size_bonus
@@ -279,7 +274,7 @@ def vision_for_span(
     preferred: Direction | None = None,
     stereo_balance: float = 0.0,
 ) -> tuple[Direction | None, float, float | None, list[VisualDetection], VisualDetection | None]:
-    """Return visual direction near an utterance, disambiguated by stereo."""
+    """Vision direction for a cue span, disambiguated with stereo if needed."""
     dets = vision_candidates_for_span(frames, start, end)
     if not dets:
         return None, 0.0, None, [], None

@@ -1,14 +1,8 @@
 #!/usr/bin/env python3
-"""Transcode a source video into multi-bitrate HLS (fMP4) packages.
+"""FFmpeg multi-bitrate HLS (fMP4) under content/hls/<name>/.
 
-Produces:
-  content/hls/<name>/
-    master.m3u8
-    manifest.json
-    360p/ ...
-    480p/ ...
-    720p/ ...
-    1080p/ ...  (if source tall enough)
+Writes master.m3u8, per-rung playlists/segments, and manifest.json for eval.
+Ladder: 360p / 480p / 720p / 1080p (skipped if source is shorter).
 """
 
 from __future__ import annotations

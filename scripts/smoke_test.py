@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Fast smoke checks for the streaming + captions stack."""
+"""Sanity checks: packages exist, captions parse, optional live /api/health."""
 
 from __future__ import annotations
 

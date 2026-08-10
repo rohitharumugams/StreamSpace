@@ -1,4 +1,4 @@
-"""Smart captions data model."""
+"""Pydantic models for caption events / tracks."""
 
 from __future__ import annotations
 

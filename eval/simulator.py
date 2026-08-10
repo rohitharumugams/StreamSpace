@@ -1,4 +1,4 @@
-"""Trace-driven ABR playback simulator."""
+"""Segment-level playback sim against Mbps traces (no real decoder)."""
 
 from __future__ import annotations
 

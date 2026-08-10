@@ -27,7 +27,7 @@ Source: `eval/results/report_focus/results.csv`
 | hybrid | spike_drop | 2702.22 | 0.00 | 1 | 0.13 |
 | risk | spike_drop | 1555.20 | 0.00 | 10 | 0.13 |
 
-Interpretation: risk-aware ABR is more conservative under volatility; on congested traces all adaptive methods drop to a safe floor while fixed-high rebuffers.
+Interpretation: risk sits lower when the trace jumps around; on congested traces all adaptive methods hit the same safe floor (fixed-high rebuffers instead).
 
 ## Spatial captions
 
@@ -52,7 +52,7 @@ Sessions: **1**
 | Standard | 50.0% | 25.0% |
 | Spatial | 50.0% | 50.0% |
 
-_Includes synthetic tooling sessions (`sim-*`). Replace with real `/study` participants for claims._
+_Includes synthetic tooling sessions (`sim-*`). Swap those out before claiming user-study results._
 
 ## How to refresh
 

@@ -1,6 +1,4 @@
-/**
- * Spatial smart captions renderer with placement-aware overlay.
- */
+/* Caption overlay: modes + absolute placement from captions.json */
 
 function alignFromEvent(event) {
   if (typeof event.x === "number") {

@@ -1,4 +1,4 @@
-"""Adaptive streaming server — HLS + network throttle + player UI."""
+"""FastAPI app: HLS segments, throttle, player/study static UI."""
 
 from __future__ import annotations
 
@@ -84,7 +84,7 @@ def safe_hls_path(rel: str) -> Path:
 
 
 def should_throttle(path: Path) -> bool:
-    # Throttle media segments / init segments; keep playlists snappy.
+    # Throttle media only — leave .m3u8 alone so ABR still gets playlists fast.
     suffix = path.suffix.lower()
     return suffix in {".m4s", ".ts", ".mp4", ".aac", ".m4a"}
 

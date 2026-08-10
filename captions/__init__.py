@@ -1,1 +1,1 @@
-"""Captions package."""
+# stereo + vision + fusion → captions.json

@@ -1,4 +1,4 @@
-"""Network bandwidth simulator driven by Mbps trace files."""
+"""Map wall-clock time → Mbps from a 1 Hz trace file."""
 
 from __future__ import annotations
 

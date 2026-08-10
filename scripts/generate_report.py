@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Generate a consolidated markdown results report."""
+"""Write docs/RESULTS.md from ABR CSVs + caption accuracy + study dumps."""
 
 from __future__ import annotations
 

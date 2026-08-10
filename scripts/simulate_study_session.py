@@ -1,8 +1,7 @@
 #!/usr/bin/env python3
-"""Create a synthetic study session for pipeline demos (not real participants).
+"""Fake /study session JSON so summarize_study / report tooling have something to chew on.
 
-Simulates weaker standard-caption performance and stronger spatial-caption
-performance so report/summary tooling can be exercised end-to-end.
+Not real participants — spatial side mostly correct, standard side messier on purpose.
 """
 
 from __future__ import annotations

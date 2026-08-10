@@ -1,7 +1,6 @@
 #!/usr/bin/env python3
-"""Evaluate spatial / speaker / placement caption quality.
+"""Score direction/speaker/placement against .cues.json ground truth.
 
-Example:
   python -m captions.eval_accuracy --video dialogue_demo
 """
 
@@ -55,7 +54,7 @@ def caption_box(event: dict, w: float = 0.42, h: float = 0.10) -> PlacementBox |
 
 
 def naive_box(direction: str, w: float = 0.42, h: float = 0.10) -> PlacementBox:
-    # Old behavior: dump captions over the speaker region in the lower third.
+    # Old baseline: park the box on the speaker side around mid-frame.
     if direction == "LEFT":
         return PlacementBox(x=0.05, y=0.45, w=w, h=h)
     if direction == "RIGHT":

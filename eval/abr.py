@@ -1,4 +1,4 @@
-"""ABR controllers (Python ports of player/abr.js)."""
+"""Python ports of player/abr.js for offline experiments."""
 
 from __future__ import annotations
 
@@ -105,11 +105,10 @@ class HybridAbr:
 
 
 class RiskAwareAbr:
-    """Conservative hybrid that prices in throughput uncertainty.
+    """Throughput ABR that shrinks budget when CV is high / buffer is thin.
 
-    Core question: how likely is an underrun before the next segment arrives?
-    Uses mean/variance, buffer headroom, and recent trend to shrink the
-    affordable bitrate and damp upgrades under volatile regimes.
+    Rough underrun check: est_segment_download / buffer_seconds.
+    Upgrades only when buffer + trend look ok; hold counter stops thrash.
     """
 
     name = "risk"
@@ -201,7 +200,7 @@ class RiskAwareAbr:
         cv = self._volatility(ctx)
         target = self._target_level(ctx, cv)
 
-        # Emergency / low-buffer: only move down, never thrash upward.
+        # Emergency: only go down.
         if ctx.buffer_seconds < 2:
             self._hold = 2
             return 0
@@ -209,7 +208,7 @@ class RiskAwareAbr:
             self._hold = max(self._hold, 1)
             return min(target, current, max(0, current - 1))
 
-        # Prefer stability: keep current if it is still affordable.
+        # Stick with current if it's still affordable.
         conservative = self._conservative_bps(ctx, cv)
         current_bitrate = ctx.levels[current].bitrate
         current_risk = self._underrun_risk(
@@ -223,7 +222,7 @@ class RiskAwareAbr:
         safe_enough = current_risk <= self.risk_horizon * (1.15 if cv > 0.35 else 1.35)
 
         if target < current:
-            # Only step down when current is meaningfully unsafe.
+            # Don't step down for tiny / transient dips.
             if affordable and safe_enough and ctx.buffer_seconds >= self.low_buffer:
                 if self._hold > 0:
                     self._hold -= 1
@@ -236,7 +235,7 @@ class RiskAwareAbr:
             return max(0, chosen)
 
         if target > current and affordable and safe_enough:
-            # Upgrade only with healthy buffer, mild volatility, and no downtrend.
+            # Upgrade only with buffer + trend looking ok.
             can_up = (
                 ctx.buffer_seconds >= 10.0
                 and ctx.throughput_trend >= -0.1

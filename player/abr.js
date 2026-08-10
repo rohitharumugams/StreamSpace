@@ -1,8 +1,4 @@
-/**
- * ABR controllers for hls.js (manual level selection).
- *
- * Each decide() returns a level index into hls.levels.
- */
+/* Manual ABR for hls.js — decide() returns an index into hls.levels */
 
 export function createAbrController(name) {
   switch (name) {
