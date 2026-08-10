@@ -1,0 +1,42 @@
+{
+  "name": "sample",
+  "source": "sample.mp4",
+  "duration_seconds": 90.0,
+  "segment_duration_seconds": 2.0,
+  "master_playlist": "master.m3u8",
+  "representations": [
+    {
+      "name": "360p",
+      "width": 640,
+      "height": 360,
+      "video_bitrate_kbps": 800,
+      "audio_bitrate_kbps": 96,
+      "bandwidth_bps": 896000,
+      "playlist": "360p/playlist.m3u8",
+      "init": "360p/init.mp4",
+      "segment_count": 45
+    },
+    {
+      "name": "480p",
+      "width": 854,
+      "height": 480,
+      "video_bitrate_kbps": 1400,
+      "audio_bitrate_kbps": 128,
+      "bandwidth_bps": 1528000,
+      "playlist": "480p/playlist.m3u8",
+      "init": "480p/init.mp4",
+      "segment_count": 45
+    },
+    {
+      "name": "720p",
+      "width": 1280,
+      "height": 720,
+      "video_bitrate_kbps": 2800,
+      "audio_bitrate_kbps": 128,
+      "bandwidth_bps": 2928000,
+      "playlist": "720p/playlist.m3u8",
+      "init": "720p/init.mp4",
+      "segment_count": 45
+    }
+  ]
+}

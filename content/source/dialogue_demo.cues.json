@@ -1,0 +1,44 @@
+[
+  {
+    "start": 1.0,
+    "end": 1.989,
+    "speaker": "JOHN",
+    "side": "LEFT",
+    "text": "Where are you going?"
+  },
+  {
+    "start": 4.0,
+    "end": 5.003,
+    "speaker": "SARA",
+    "side": "RIGHT",
+    "text": "Over to the window."
+  },
+  {
+    "start": 7.5,
+    "end": 8.21,
+    "speaker": "JOHN",
+    "side": "LEFT",
+    "text": "Wait for me."
+  },
+  {
+    "start": 10.5,
+    "end": 11.17,
+    "speaker": "SARA",
+    "side": "RIGHT",
+    "text": "I'm coming."
+  },
+  {
+    "start": 14.0,
+    "end": 14.932,
+    "speaker": "JOHN",
+    "side": "LEFT",
+    "text": "Did you hear that?"
+  },
+  {
+    "start": 17.0,
+    "end": 18.32,
+    "speaker": "SARA",
+    "side": "RIGHT",
+    "text": "It sounded like a phone."
+  }
+]

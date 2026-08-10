@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Adaptive Streaming Player</title>
+    <link rel="stylesheet" href="/player/styles.css" />
+    <script src="https://cdn.jsdelivr.net/npm/hls.js@1.5.17/dist/hls.min.js"></script>
+  </head>
+  <body>
+    <main class="layout">
+      <header class="header">
+        <h1>Adaptive Streaming</h1>
+        <p class="subtitle">
+          Spatial smart captions + adaptive streaming ·
+          <a href="/study">run caption study</a>
+        </p>
+      </header>
+
+      <section class="stage">
+        <video id="video" controls playsinline></video>
+        <div id="captionOverlay" class="caption-overlay" aria-live="polite"></div>
+      </section>
+
+      <section class="controls">
+        <label>
+          Video
+          <select id="videoSelect"></select>
+        </label>
+        <label>
+          Captions
+          <select id="captionMode">
+            <option value="off">Off</option>
+            <option value="standard">Standard</option>
+            <option value="speaker">Speaker-aware</option>
+            <option value="spatial" selected>Spatial</option>
+            <option value="full">Full accessibility</option>
+          </select>
+        </label>
+        <label>
+          ABR
+          <select id="abrSelect">
+            <option value="throughput">Throughput</option>
+            <option value="buffer">Buffer</option>
+            <option value="hybrid">Hybrid</option>
+            <option value="risk" selected>Risk-aware</option>
+            <option value="hls">hls.js native</option>
+            <option value="fixed">Fixed quality</option>
+          </select>
+        </label>
+        <label>
+          Quality
+          <select id="qualitySelect">
+            <option value="0">—</option>
+          </select>
+        </label>
+        <label>
+          Network trace
+          <select id="traceSelect">
+            <option value="">None (unlimited)</option>
+          </select>
+        </label>
+        <button id="reloadBtn" type="button">Reload</button>
+        <button id="exportBtn" type="button" class="secondary">Export metrics</button>
+      </section>
+
+      <section class="telemetry" aria-live="polite">
+        <h2>Telemetry</h2>
+        <dl id="telemetry">
+          <div><dt>Quality</dt><dd id="tQuality">—</dd></div>
+          <div><dt>Buffer</dt><dd id="tBuffer">—</dd></div>
+          <div><dt>Throughput</dt><dd id="tThroughput">—</dd></div>
+          <div><dt>Simulated BW</dt><dd id="tSimBw">—</dd></div>
+          <div><dt>Volatility</dt><dd id="tVol">—</dd></div>
+          <div><dt>Position</dt><dd id="tPosition">—</dd></div>
+          <div><dt>Segment</dt><dd id="tSegment">—</dd></div>
+          <div><dt>Download</dt><dd id="tDownload">—</dd></div>
+          <div><dt>State</dt><dd id="tState">idle</dd></div>
+        </dl>
+      </section>
+
+      <section class="telemetry">
+        <h2>Session metrics</h2>
+        <dl id="sessionMetrics">
+          <div><dt>Startup</dt><dd id="mStartup">—</dd></div>
+          <div><dt>Rebuffer</dt><dd id="mRebuffer">—</dd></div>
+          <div><dt>Switches</dt><dd id="mSwitches">—</dd></div>
+          <div><dt>Avg bitrate</dt><dd id="mBitrate">—</dd></div>
+          <div><dt>ABR</dt><dd id="mAbr">—</dd></div>
+          <div><dt>Trace</dt><dd id="mTrace">—</dd></div>
+        </dl>
+      </section>
+
+      <section class="log">
+        <h2>Event log</h2>
+        <pre id="log"></pre>
+      </section>
+    </main>
+    <script src="/player/player.js" type="module"></script>
+  </body>
+</html>

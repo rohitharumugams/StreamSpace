@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Caption Study</title>
+    <link rel="stylesheet" href="/player/styles.css" />
+    <link rel="stylesheet" href="/player/study.css" />
+    <script src="https://cdn.jsdelivr.net/npm/hls.js@1.5.17/dist/hls.min.js"></script>
+  </head>
+  <body>
+    <main class="layout study-layout">
+      <header class="header">
+        <h1>Caption Accessibility Study</h1>
+        <p class="subtitle">
+          Compare standard vs spatial captions —
+          <a href="/">← back to player</a>
+        </p>
+      </header>
+
+      <section class="study-intro" id="intro">
+        <p>
+          You'll watch short clips with captions only (audio muted). After each clip,
+          answer who spoke and where the sound came from.
+        </p>
+        <label>
+          Participant ID
+          <input id="participantId" type="text" placeholder="e.g. p01" />
+        </label>
+        <button id="startBtn" type="button">Start study</button>
+      </section>
+
+      <section class="study-run hidden" id="run">
+        <div class="study-meta">
+          <span id="trialLabel">Trial 1</span>
+          <span id="conditionLabel">Condition: —</span>
+        </div>
+        <div class="stage">
+          <video id="video" playsinline></video>
+          <div id="captionOverlay" class="caption-overlay" aria-live="polite"></div>
+        </div>
+        <div class="study-actions">
+          <button id="replayBtn" type="button" class="secondary">Replay clip</button>
+        </div>
+        <form id="answerForm" class="study-form">
+          <fieldset>
+            <legend>Who spoke?</legend>
+            <label><input type="radio" name="speaker" value="JOHN" required /> JOHN</label>
+            <label><input type="radio" name="speaker" value="SARA" /> SARA</label>
+            <label><input type="radio" name="speaker" value="UNSURE" /> Not sure</label>
+          </fieldset>
+          <fieldset>
+            <legend>Where did the sound come from?</legend>
+            <label><input type="radio" name="side" value="LEFT" required /> LEFT</label>
+            <label><input type="radio" name="side" value="CENTER" /> CENTER</label>
+            <label><input type="radio" name="side" value="RIGHT" /> RIGHT</label>
+            <label><input type="radio" name="side" value="UNSURE" /> Not sure</label>
+          </fieldset>
+          <button type="submit">Next</button>
+        </form>
+      </section>
+
+      <section class="study-done hidden" id="done">
+        <h2>Thanks</h2>
+        <pre id="summary"></pre>
+        <button id="downloadBtn" type="button" class="secondary">Download results JSON</button>
+        <a href="/">Return to player</a>
+      </section>
+    </main>
+    <script src="/player/study.js" type="module"></script>
+  </body>
+</html>

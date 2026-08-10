@@ -1,0 +1,47 @@
+# Python / env
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+.env
+.pytest_cache/
+*.log
+.DS_Store
+node_modules/
+
+# Local / generated study + eval outputs
+content/captions_work/
+content/study_results/
+eval/results/
+
+# Inbox: keep docs only (drop user uploads)
+content/inbox/*
+!content/inbox/.gitkeep
+!content/inbox/README.md
+
+# Source media: ship demos, never TOS / large personal uploads
+content/source/*
+!content/source/.gitkeep
+!content/source/dialogue_demo.mp4
+!content/source/dialogue_demo.cues.json
+!content/source/sample.mp4
+
+# HLS packages: ship demos only
+content/hls/*
+!content/hls/.gitkeep
+!content/hls/dialogue_demo/
+!content/hls/dialogue_demo/**
+!content/hls/sample/
+!content/hls/sample/**
+
+# Explicit TOS exclusions (belt-and-suspenders)
+**/TOS/
+**/TOS.*
+*TOS*.mp4
+*TOS*.srt
+content/source/TOS.mp4
+content/source/TOS.srt
+content/inbox/TOS.mp4
+content/inbox/TOS.srt
+content/hls/TOS/
+content/captions_work/TOS/
